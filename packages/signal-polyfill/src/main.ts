@@ -1,7 +1,7 @@
 import "./style.css";
 
-import { Signal } from "./wrapper";
-import { effect } from "./effect";
+import { Signal } from "./signal/wrapper";
+import { effect } from "./signal/effect";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
