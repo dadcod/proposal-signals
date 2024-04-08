@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="currency-converter.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <currency-converter></currency-converter>
+  </body>
+  <script>
+    //two-way binding
+    function bindInputToProperty(input, obj, prop, effect) {
+      // Set the initial value
+      input.value = obj[prop];
+
+      // Listen for changes on the input element and update the object
+      input.addEventListener("input", (e) => {
+        obj[prop] = e.target.value;
+      });
+
+      // Create a private field to store the value
+      obj[`_${prop}`] = obj[prop];
+
+      Object.defineProperty(obj, prop, {
+        set(value) {
+          obj[`_${prop}`] = value;
+          input.value = obj[prop];
+          effect(value);
+        },
+        get() {
+          return obj[`_${prop}`];
+        },
+      });
+    }
+
+    //one-way binding
+    function bindElementToProperty(input, obj, prop, effect) {
+      // Set the initial value
+      input.innerHTML = obj[prop];
+
+      // Create a private field to store the value
+      obj[`_${prop}`] = obj[prop];
+
+      Object.defineProperty(obj, prop, {
+        set(value) {
+          obj[`_${prop}`] = value;
+          input.innerHTML = obj[prop];
+          effect(value);
+        },
+        get() {
+          return obj[`_${prop}`];
+        },
+      });
+    }
+
+    const converterComponent =
+      document.getElementsByTagName("currency-converter")[0];
+
+    // Your component starts here
+
+    let data = { amount: 1, rate: 1.81 };
+    let input = converterComponent.inputElement;
+    let propName = "amount";
+
+    bindInputToProperty(input, data, propName, updateResult);
+
+    bindElementToProperty(
+      converterComponent.rateElement,
+      data,
+      "rate",
+      updateResult
+    );
+    updateResult();
+
+    converterComponent.onUpdateCallback = () => {
+      data.rate = (1.8 + Math.random() / 10).toFixed(2);
+    };
+
+    function updateResult() {
+      converterComponent.resultInnerHtml = data.amount * data.rate;
+    }
+  </script>
+</html>
